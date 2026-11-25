@@ -1,0 +1,101 @@
+.numbers-form {
+  display: flex;
+  width: min(100%, 680px);
+  flex-direction: column;
+  gap: 12px;
+  margin: 32px auto 0;
+  text-align: left;
+}
+
+.numbers-textarea-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.numbers-help {
+  margin: -8px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.numbers-textarea {
+  width: 100%;
+  min-height: 160px;
+  resize: vertical;
+  border: 2px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font: inherit;
+  line-height: 1.5;
+  color: #1e293b;
+  background: #ffffff;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.numbers-textarea::placeholder {
+  color: #64748b;
+}
+
+.numbers-textarea:hover {
+  border-color: #94a3b8;
+}
+
+.numbers-textarea:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.numbers-submit-button {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font: inherit;
+  font-weight: 700;
+  color: #ffffff;
+  background: #2563eb;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.numbers-submit-button:hover {
+  background: #1d4ed8;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
+}
+
+.numbers-submit-button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 3px;
+}
+
+.puzzle-result {
+  width: min(100%, 680px);
+  margin: 16px auto 0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: #1e293b;
+  background: #eff6ff;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .numbers-form {
+    margin-top: 24px;
+  }
+
+  .numbers-textarea {
+    min-height: 150px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .numbers-textarea,
+  .numbers-submit-button {
+    transition: none;
+  }
+}

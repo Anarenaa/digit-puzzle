@@ -18,4 +18,8 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at top left, rgba(219, 234, 254, 0.9), transparent 32rem),
+    linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
 }
