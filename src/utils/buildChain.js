@@ -1,50 +1,99 @@
-export function buildChain(numbersString, maxSteps = 3000000) {
-  const parts = numbersString.split(/[,\s]+/).filter(Boolean);
-  if (!parts.length) return { chain: '', chainArr: [], chainCount: 0 };
+function createNodes(parts) {
+  const n = parts.length;
+  const nodes = parts.map((value, idx) => ({
+    idx,
+    value,
+    first2: value.slice(0, 2),
+    last2: value.slice(-2),
+    next: [],
+    prev: [],
+  }));
 
-  let best = [];
-  let steps = 0;
-
-  function dfs(chain, used) {
-    if (++steps > maxSteps) return;
-    if (chain.length > best.length) best = [...chain];
-
-    if (chain.length + (parts.length - chain.length) <= best.length) return;
-
-    const first = chain[0];
-    const last = chain[chain.length - 1];
-    const head = first.slice(0, 2);
-    const tail = last.slice(-2);
-
-    for (let i = 0; i < parts.length; i++) {
-      if (used[i] || steps > maxSteps) continue;
-      const item = parts[i];
-
-      if (item.slice(-2) === head) {
-        used[i] = true;
-        chain.unshift(item);
-        dfs(chain, used);
-        chain.shift();
-        used[i] = false;
-      } else if (item.slice(0, 2) === tail) {
-        used[i] = true;
-        chain.push(item);
-        dfs(chain, used);
-        chain.pop();
-        used[i] = false;
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      if (i !== j && nodes[i].last2 === nodes[j].first2) {
+        nodes[i].next.push(j);
+        nodes[j].prev.push(i);
       }
     }
   }
 
-  for (let i = 0; i < parts.length && steps <= maxSteps; i++) {
-    const used = Array(parts.length).fill(false);
-    used[i] = true;
-    dfs([parts[i]], used);
+  return nodes;
+}
+
+function calcMaxSteps(n, nodes) {
+  const edgesCount = nodes.reduce((sum, node) => sum + node.next.length, 0);
+  return Math.min(4_000_000, Math.max(50_000, n * 5_000 + edgesCount * 10_000));
+}
+
+function runDfs(ctx, current, used) {
+  if (++ctx.steps > ctx.maxSteps) return;
+  if (current.length > ctx.bestIndices.length) {
+    ctx.bestIndices = [...current];
+  }
+  if (ctx.bestIndices.length >= ctx.maxPossible) return;
+
+  const head = ctx.nodes[current[0]];
+  const tail = ctx.nodes[current[current.length - 1]];
+
+  for (const nextIdx of tail.next) {
+    if (used[nextIdx] || ctx.steps > ctx.maxSteps) continue;
+    used[nextIdx] = true;
+    current.push(nextIdx);
+    runDfs(ctx, current, used);
+    current.pop();
+    used[nextIdx] = false;
   }
 
-  const chain = best
+  for (const prevIdx of head.prev) {
+    if (used[prevIdx] || ctx.steps > ctx.maxSteps) continue;
+    used[prevIdx] = true;
+    current.unshift(prevIdx);
+    runDfs(ctx, current, used);
+    current.shift();
+    used[prevIdx] = false;
+  }
+}
+
+function formatResult(nodes, bestIndices) {
+  const chainArr = bestIndices.map((idx) => nodes[idx].value);
+  const chain = chainArr
     .map((part, idx) => (idx === 0 ? part : part.slice(2)))
     .join('');
 
-  return { chain, chainArr: best, chainCount: best.length };
+  return { chain, chainArr, chainCount: chainArr.length };
+}
+
+export function buildChain(numbersString) {
+  const parts = numbersString.split(/[,\s]+/).filter(Boolean);
+  const n = parts.length;
+  if (!n) return { chain: '', chainArr: [], chainCount: 0 };
+
+  const nodes = createNodes(parts);
+  const maxPossible = Math.max(
+    1,
+    nodes.filter((node) => node.next.length || node.prev.length).length,
+  );
+
+  const ctx = {
+    nodes,
+    maxPossible,
+    maxSteps: calcMaxSteps(n, nodes),
+    steps: 0,
+    bestIndices: [],
+  };
+
+  const startOrder = nodes
+    .map((_, idx) => idx)
+    .sort((a, b) => nodes[a].next.length - nodes[b].next.length);
+
+  for (const startIdx of startOrder) {
+    if (ctx.steps > ctx.maxSteps || ctx.bestIndices.length >= maxPossible)
+      break;
+    const used = Array(n).fill(false);
+    used[startIdx] = true;
+    runDfs(ctx, [startIdx], used);
+  }
+
+  return formatResult(nodes, ctx.bestIndices);
 }
