@@ -1,9 +1,17 @@
+.puzzle-container {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+.result-container {
+  width: 100%;
+}
 .numbers-form {
   display: flex;
-  width: min(100%, 680px);
+  width: 100%;
   flex-direction: column;
   gap: 12px;
-  margin: 32px auto 0;
+  margin-top: 32px;
   text-align: left;
 }
 
@@ -81,6 +89,15 @@
   color: #1e293b;
   background: #eff6ff;
   overflow-wrap: anywhere;
+}
+.result-length {
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .puzzle-container{
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 600px) {

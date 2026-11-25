@@ -16,7 +16,7 @@ export default function Puzzle() {
   }
 
   return (
-    <>
+    <div className="puzzle-container">
       <form className="numbers-form" onSubmit={handleSubmit}>
         <label className="numbers-textarea-label" htmlFor="numbers-textarea">
           Числа
@@ -49,6 +49,6 @@ export default function Puzzle() {
           </p>
         </div>
       )}
-    </>
+    </div>
   );
 }
