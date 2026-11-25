@@ -1,13 +1,18 @@
 import { useState } from 'react';
+import { buildChain } from '../utils/buildChain';
 import './Puzzle.css';
 
 export default function Puzzle() {
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState(null);
 
   function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    setResult(formData.get('numbers') || '');
+    const numbersString = formData.get('numbers');
+
+    if (typeof numbersString === 'string') {
+      setResult(buildChain(numbersString));
+    }
   }
 
   return (
@@ -32,9 +37,17 @@ export default function Puzzle() {
       </form>
 
       {result && (
-        <p className="puzzle-result" role="status">
-          {result}
-        </p>
+        <div className="result-container">
+          <p className="result-length" role="status">
+            Найдовший ланцюжок: {result.chainCount}
+          </p>
+          <p className="puzzle-result" role="status">
+            {result.chain}
+          </p>
+          <p className="puzzle-result" role="status">
+            {result.chainArr.join(' & ')}
+          </p>
+        </div>
       )}
     </>
   );
