@@ -11,7 +11,7 @@
   width: 100%;
   flex-direction: column;
   gap: 12px;
-  margin-top: 32px;
+  margin-top: 20px;
   text-align: left;
 }
 
@@ -57,7 +57,23 @@
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
+.textarea-container{
+    gap: 1rem;
+}
+.input-error, .input-error:focus{
+    border-color: #b80000;
+}
+.field-error{
+    margin: 0;
+    color: #b80000;
+}
+
+.buttons-container{
+  display: flex;
+  gap: 0.5rem;
+}
 .numbers-submit-button {
+  flex: 1;
   border: 0;
   border-radius: 10px;
   padding: 12px 20px;
@@ -77,6 +93,30 @@
 }
 
 .numbers-submit-button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 3px;
+}
+
+.numbers-reset-button {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font: inherit;
+  font-weight: 700;
+  color: #334155;
+  background: #e0e0e0;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.numbers-reset-button:hover {
+  background: #d6d6d6;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+}
+
+.numbers-reset-button:focus-visible {
   outline: 3px solid rgba(37, 99, 235, 0.35);
   outline-offset: 3px;
 }

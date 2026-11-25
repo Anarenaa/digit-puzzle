@@ -1,39 +1,81 @@
 import { useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { puzzleFormSchema } from '../schemas/puzzleFormSchema';
 import { buildChain } from '../utils/buildChain';
 import './Puzzle.css';
 
 export default function Puzzle() {
   const [result, setResult] = useState(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(puzzleFormSchema),
+    defaultValues: { numbersInput: '' },
+    mode: 'onSubmit',
+  });
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const numbersString = formData.get('numbers');
+  const numbersInput = useWatch({
+    control,
+    name: 'numbersInput',
+    defaultValue: '',
+  });
+  const hasInput = (numbersInput ?? '').trim().length > 0;
 
-    if (typeof numbersString === 'string') {
-      setResult(buildChain(numbersString));
-    }
+  function onSubmit({ numbersInput }) {
+    setResult(buildChain(numbersInput));
+  }
+  function handleReset() {
+    reset();
+    setResult(null);
   }
 
   return (
     <div className="puzzle-container">
-      <form className="numbers-form" onSubmit={handleSubmit}>
+      <form
+        className="numbers-form"
+        noValidate
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <label className="numbers-textarea-label" htmlFor="numbers-textarea">
           Числа
         </label>
         <p className="numbers-help" id="numbers-help">
-          Введіть числа через пробіл, кому або кожне з нового рядка.
+          Введіть числа (понад 2 цифри) через пробіл, кому або кожне з нового
+          рядка.
         </p>
-        <textarea
-          className="numbers-textarea"
-          name="numbers"
-          id="numbers-textarea"
-          aria-describedby="numbers-help"
-          placeholder="Наприклад: 1234, 4567, 7890"
-        />
-        <button className="numbers-submit-button" type="submit">
-          Скласти пазл
-        </button>
+        <div className="textarea-container">
+          <textarea
+            {...register('numbersInput')}
+            id="numbers-textarea"
+            required
+            placeholder="Наприклад: 1234, 4567, 7890"
+            className={`numbers-textarea ${errors.numbersInput ? 'input-error' : ''}`}
+            aria-invalid={errors.numbersInput ? 'true' : 'false'}
+            aria-describedby="numbers-help numbers-error"
+          />
+          <p id="numbers-error" className="field-error">
+            {errors.numbersInput?.message}
+          </p>
+        </div>
+        <div className="buttons-container">
+          <button className="numbers-submit-button" type="submit">
+            Скласти пазл
+          </button>
+          {hasInput && (
+            <button
+              className="numbers-reset-button"
+              type="reset"
+              onClick={handleReset}
+            >
+              Скинути
+            </button>
+          )}
+        </div>
       </form>
 
       {result && (
