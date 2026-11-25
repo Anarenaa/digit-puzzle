@@ -7,6 +7,8 @@ import './Puzzle.css';
 
 export default function Puzzle() {
   const [result, setResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -27,9 +29,19 @@ export default function Puzzle() {
   const hasInput = (numbersInput ?? '').trim().length > 0;
 
   function onSubmit({ numbersInput }) {
-    setResult(buildChain(numbersInput));
+    if (isLoading) return;
+
+    setIsLoading(true);
+    setTimeout(() => {
+      try {
+        setResult(buildChain(numbersInput));
+      } finally {
+        setIsLoading(false);
+      }
+    }, 0);
   }
   function handleReset() {
+    setIsLoading(false);
     reset();
     setResult(null);
   }
@@ -63,13 +75,18 @@ export default function Puzzle() {
           </p>
         </div>
         <div className="buttons-container">
-          <button className="numbers-submit-button" type="submit">
-            Скласти пазл
+          <button
+            className="numbers-submit-button"
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Складання пазлу...' : 'Скласти пазл'}
           </button>
           {hasInput && (
             <button
               className="numbers-reset-button"
               type="reset"
+              disabled={isLoading}
               onClick={handleReset}
             >
               Скинути
